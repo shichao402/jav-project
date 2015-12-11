@@ -14,7 +14,7 @@ from scrapy.exceptions import DropItem
 class JavPipeline(object):
     def __init__(self):
         self.ids_seen = set()
-        self.output = "output"
+        self.output = "D:\\jav-project\\output"
 
     def process_item(self, item, spider):
         output_dir = self.output + os.sep + item['release_date'] + os.sep
