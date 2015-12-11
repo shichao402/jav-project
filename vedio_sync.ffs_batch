@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FreeFileSync XmlFormat="5" XmlType="BATCH">
+    <MainConfig>
+        <Comparison>
+            <Variant>TimeAndSize</Variant>
+            <Symlinks>Exclude</Symlinks>
+            <IgnoreTimeShift/>
+        </Comparison>
+        <SyncConfig>
+            <Variant>Update</Variant>
+            <CustomDirections>
+                <LeftOnly>right</LeftOnly>
+                <RightOnly>none</RightOnly>
+                <LeftNewer>right</LeftNewer>
+                <RightNewer>none</RightNewer>
+                <Different>right</Different>
+                <Conflict>none</Conflict>
+            </CustomDirections>
+            <DetectMovedFiles>false</DetectMovedFiles>
+            <DeletionPolicy>Permanent</DeletionPolicy>
+            <VersioningFolder Style="Replace"/>
+        </SyncConfig>
+        <GlobalFilter>
+            <Include>
+                <Item>*</Item>
+            </Include>
+            <Exclude>
+                <Item>\System Volume Information\</Item>
+                <Item>\$Recycle.Bin\</Item>
+                <Item>\RECYCLER\</Item>
+                <Item>\RECYCLED\</Item>
+                <Item>*\desktop.ini</Item>
+                <Item>*\thumbs.db</Item>
+                <Item>*.tdl</Item>
+                <Item>*.td</Item>
+                <Item>*.qdl2</Item>
+                <Item>*.rar</Item>
+                <Item>*.exe</Item>
+                <Item>*.zip</Item>
+                <Item>*.qrs</Item>
+            </Exclude>
+            <TimeSpan Type="None">0</TimeSpan>
+            <SizeMin Unit="KB">5000</SizeMin>
+            <SizeMax Unit="None">0</SizeMax>
+        </GlobalFilter>
+        <FolderPairs>
+            <Pair>
+                <Left>D:\Downloads\vedio</Left>
+                <Right>D:\微云同步盘\48822512\vvvvvvv</Right>
+            </Pair>
+        </FolderPairs>
+        <OnCompletion/>
+    </MainConfig>
+    <BatchConfig>
+        <HandleError>Ignore</HandleError>
+        <RunMinimized>true</RunMinimized>
+        <LogfileFolder Limit="-1"/>
+    </BatchConfig>
+</FreeFileSync>

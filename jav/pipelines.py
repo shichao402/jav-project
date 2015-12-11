@@ -10,6 +10,8 @@ from StringIO import StringIO
 import urllib2
 import os
 from scrapy.exceptions import DropItem
+from scrapy.xlib.pydispatch import dispatcher
+from scrapy import log, signals
 
 class JavPipeline(object):
     def __init__(self):
@@ -64,3 +66,6 @@ class JavPipeline(object):
 
         return False
 
+def on_spider_closed(spider, reason):
+    print "!!!!!!!!done"
+dispatcher.connect(on_spider_closed, signal=signals.spider_closed)
