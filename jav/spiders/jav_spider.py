@@ -20,7 +20,6 @@ class JavSpider(scrapy.Spider):
     visited_fp = None
     output_dir = "output"
 
-
     def __init__(self):
         dispatcher.connect(self.spider_closed, signals.spider_closed)
         try:
@@ -53,7 +52,10 @@ class JavSpider(scrapy.Spider):
         image_link = sel.xpath("//a[@rel='shadowbox']/@href").extract()[0]
         item['image_link'] = self.format_url(response.url, image_link)
 
-        magnet = sel.xpath("//textarea/text()").extract()[0]
+        try:
+            magnet = sel.xpath("//textarea/text()").extract()[0]
+        except Exception, e:
+            magnet = ""
         item['magnet'] = magnet
 
         item['name'] = response.url.rstrip("/").split('/')[-1]

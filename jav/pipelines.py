@@ -11,12 +11,17 @@ import urllib2
 import os
 from scrapy.exceptions import DropItem
 from scrapy.xlib.pydispatch import dispatcher
-from scrapy import log, signals
+from scrapy import signals
+
 
 class JavPipeline(object):
     def __init__(self):
         self.ids_seen = set()
         self.output = "D:\\jav-project\\output"
+        dispatcher.connect(self.on_spider_closed, signal=signals.spider_closed)
+
+    def on_spider_closed(spider, reason):
+        print "!!!!!!!!done"
 
     def process_item(self, item, spider):
         output_dir = self.output + os.sep + item['release_date'] + os.sep
@@ -63,9 +68,4 @@ class JavPipeline(object):
             return True
         else:
             print "download data error" + filename
-
         return False
-
-def on_spider_closed(spider, reason):
-    print "!!!!!!!!done"
-dispatcher.connect(on_spider_closed, signal=signals.spider_closed)
