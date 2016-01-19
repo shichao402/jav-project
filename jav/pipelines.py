@@ -17,7 +17,7 @@ from scrapy import signals
 class JavPipeline(object):
     def __init__(self):
         self.ids_seen = set()
-        self.output = "D:\\jav-project\\output"
+        self.output = "output"
         dispatcher.connect(self.on_spider_closed, signal=signals.spider_closed)
 
     def on_spider_closed(spider, reason):

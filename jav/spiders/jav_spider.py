@@ -10,6 +10,7 @@ import json
 from scrapy import signals
 from scrapy.xlib.pydispatch import dispatcher
 
+
 class JavSpider(scrapy.Spider):
     name = "jav"
     allowed_domains = ["141jav.com"]
