@@ -9,6 +9,7 @@ import scrapy
 
 
 class JavItem(scrapy.Item):
+    url = scrapy.Field()
     magnet = scrapy.Field()
     md5 = scrapy.Field()
     torrent = scrapy.Field()

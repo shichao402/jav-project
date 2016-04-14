@@ -4,11 +4,13 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
-
+import pickle
 import gzip
 from StringIO import StringIO
 import urllib2
 import os
+import re
+import scrapy
 from scrapy.exceptions import DropItem
 from scrapy.xlib.pydispatch import dispatcher
 from scrapy import signals
@@ -16,18 +18,12 @@ from scrapy import signals
 
 class JavPipeline(object):
     def __init__(self):
-        self.ids_seen = set()
-        self.output = "output"
-        dispatcher.connect(self.on_spider_closed, signal=signals.spider_closed)
-
-    def on_spider_closed(spider, reason):
-        print "!!!!!!!!done"
+        settings = scrapy.utils.project.get_project_settings()
+        self.output = settings.get('ROOT') + os.sep + "output"
 
     def process_item(self, item, spider):
-        output_dir = self.output + os.sep + item['release_date'] + os.sep
-        if item['name'] in self.ids_seen:
-            raise DropItem("Duplicate item found: %s" % item['name'])
-        self.ids_seen.add(item['name'])
+        prefix = re.findall('[a-zA-Z]+', item['name'])[0]
+        output_dir = self.output + os.sep + prefix + os.sep
         filename = item['name'] + '.torrent'
         self.down(item['image_link'], output_dir, item['name'] + '.jpg')
         for _url in item['torrent_download_link']:
@@ -69,3 +65,22 @@ class JavPipeline(object):
         else:
             print "download data error" + filename
         return False
+
+class duplicatesPipeline(object):
+    def __init__(self):
+        self.dumplicate_file = scrapy.utils.project.get_project_settings().get('ROOT') + os.sep + "dumplicate_records.txt"
+        try:
+            self.ids_seen = pickle.load(open(self.dumplicate_file, "r"))
+        except:
+            self.ids_seen = set()
+        dispatcher.connect(self.on_spider_closed, signal=signals.spider_closed)
+
+    def on_spider_closed(self, spider, reason):
+        pickle.dump(self.ids_seen, open(self.dumplicate_file, "w"))
+
+    def process_item(self, item, spider):
+        if item['url'] in self.ids_seen:
+            raise DropItem("Duplicate item found: %s" % item)
+        else:
+            self.ids_seen.add(item['url'])
+            return item

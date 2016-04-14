@@ -8,12 +8,22 @@
 #     http://doc.scrapy.org/en/latest/topics/settings.html
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
+import os
 
 BOT_NAME = 'jav'
+
+ROOT = os.path.split(os.path.realpath(__file__))[0] + os.sep + ".."
 
 SPIDER_MODULES = ['jav.spiders']
 NEWSPIDER_MODULE = 'jav.spiders'
 ITEM_PIPELINES = ['jav.pipelines.JavPipeline']
+
+ITEM_PIPELINES = {
+	'jav.pipelines.JavPipeline': 600,
+	#'jav.pipelines.MyImagesPipeline': 500,
+	'jav.pipelines.duplicatesPipeline': 100,
+}
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'jav (+http://www.yourdomain.com)'
