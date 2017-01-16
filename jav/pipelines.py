@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
-# See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
+# coding=utf8
 import os, sys, re, pickle, hashlib, StringIO, bencode, logging, requests, time
 import scrapy
 from scrapy.exceptions import DropItem
@@ -28,7 +23,7 @@ class JavPipeline(object):
         image_filename = fileprefix + '.jpg'
         
         if not self.download(item['image_link'], output_dir, image_filename):
-            logging.log(logging.DEBUG, 'Õº∆¨œ¬‘ÿ ß∞‹: %s'.decode('utf-8') % (image_filename))
+            logging.log(logging.DEBUG, 'ÂõæÁâá‰∏ãËΩΩÂ§±Ë¥•: %s'.decode('utf-8') % (image_filename))
             return item
 
         for _url in item['torrent_download_link']:
@@ -45,11 +40,11 @@ class JavPipeline(object):
                             torrent_file.close()
                     except Exception as e:
                         pass
-                    logging.log(logging.DEBUG, 'œ¬‘ÿŒƒº˛Ω‚Œˆ ß∞‹: %s, %s'.decode('utf-8') % (output_dir + torrent_filename, str(e.message)))
+                    logging.log(logging.DEBUG, '‰∏ãËΩΩÊñá‰ª∂Ëß£ÊûêÂ§±Ë¥•: %s, %s'.decode('utf-8') % (output_dir + torrent_filename, str(e.message)))
                     try:
                         os.remove(output_dir + torrent_filename)
                     except Exception as e:
-                        logging.log(logging.DEBUG, 'œ¬‘ÿŒƒº˛…æ≥˝ ß∞‹: %s, %s'.decode('utf-8') % (output_dir + torrent_filename, str(e.message)))
+                        logging.log(logging.DEBUG, '‰∏ãËΩΩÊñá‰ª∂Âà†Èô§Â§±Ë¥•: %s, %s'.decode('utf-8') % (output_dir + torrent_filename, str(e.message)))
                     continue
         
         return item
@@ -57,7 +52,7 @@ class JavPipeline(object):
     def download(self, url, output_dir, filename):
         if not os.path.isdir(output_dir):
             if not os.makedirs(output_dir):
-                logging.log(logging.DEBUG, '¥¥Ω® ß∞‹: %s'.decode('utf-8') % (output_dir))
+                logging.log(logging.DEBUG, 'ÂàõÂª∫Â§±Ë¥•: %s'.decode('utf-8') % (output_dir))
         try:
             time.sleep(self.delay)
             r = requests.get(url)
@@ -66,7 +61,7 @@ class JavPipeline(object):
                     file.write(r.content)
                     return True
         except Exception, e:
-            logging.log(logging.DEBUG, 'œ¬‘ÿ ß∞‹: %s, %s'.decode('utf-8') % (filename, str(e.message)))
+            logging.log(logging.DEBUG, '‰∏ãËΩΩÂ§±Ë¥•: %s, %s'.decode('utf-8') % (filename, str(e.message)))
         return False
 
 class duplicatesPipeline(object):
