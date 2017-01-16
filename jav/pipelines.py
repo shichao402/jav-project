@@ -4,18 +4,12 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
-import pickle
-import gzip
-from StringIO import StringIO
-import urllib2
-import os
-import re
+import os, sys, re, pickle, hashlib, StringIO, bencode, logging, requests
 import scrapy
 from scrapy.exceptions import DropItem
 from scrapy.xlib.pydispatch import dispatcher
 from scrapy import signals
-
-
+ids_seen = set()
 class JavPipeline(object):
     def __init__(self):
         settings = scrapy.utils.project.get_project_settings()
@@ -24,63 +18,79 @@ class JavPipeline(object):
     def process_item(self, item, spider):
         prefix = re.findall('[a-zA-Z]+', item['name'])[0]
         output_dir = self.output + os.sep + prefix + os.sep
-        filename = item['name'] + '.torrent'
-        self.down(item['image_link'], output_dir, item['name'] + '.jpg')
-        for _url in item['torrent_download_link']:
-            if self.down(_url, output_dir, filename):
-                return item
-        if item['md5'] == "":
-            raise DropItem("Wrong item found: %s" % item)
-        url = item['torrent']
-        self.down(url, output_dir, filename)
+        if item['actor'] != "":
+            fileprefix = item['name'] + '_' + item['actor']
+        else:
+            fileprefix = item['name']
+        fileprefix = fileprefix.replace(" ", "_")
+        torrent_filename = fileprefix + '.torrent'
+        image_filename = fileprefix + '.jpg'
+        image_download_success = False
+        for i in range(3):
+            if self.download(item['image_link'], output_dir, image_filename):
+                image_download_success = True
+                break;
+        #图片下载失败
+        if image_download_success == False:
+            logging.log(logging.DEBUG, '图片下载失败: %s, %s'.decode('utf-8') % (image_filename, str(e.message)))
+            return item
+
+        for i in range(3):
+            for _url in item['torrent_download_link']:
+                if self.download(_url, output_dir, torrent_filename):
+                    try:
+                        torrent_file = None
+                        torrent_file = open(output_dir + torrent_filename, "rb")
+                        metainfo = bencode.bdecode(torrent_file.read())
+                        ids_seen.add(item['name'])
+                        return item
+                    except Exception as e:
+                        try:
+                            if torrent_file != None:
+                                torrent_file.close()
+                        except Exception as e:
+                            pass
+                        logging.log(logging.DEBUG, '下载文件解析失败: %s, %s'.decode('utf-8') % (output_dir + torrent_filename, str(e.message)))
+                        if not os.remove(output_dir + torrent_filename):
+                            logging.log(logging.DEBUG, '下载文件删除失败: %s, %s'.decode('utf-8') % (output_dir + torrent_filename, str(e.message)))
+                        continue
+        
         return item
 
-    def down(self, url, output_dir, filename):
+    def download(self, url, output_dir, filename):
         try:
-            request = urllib2.Request(url)
-            request.add_header('Accept-encoding', 'gzip, deflate, sdch')
-            request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36')
-            response = urllib2.urlopen(request)
+            if os.mkdir(output_dir):
+                logging.log(logging.DEBUG, '文件夹不存在, 创建成功: %s'.decode('utf-8') % (output_dir))
         except Exception, e:
-            print "download error", filename, str(e.message)
-            return False
-
+            pass
         try:
-            os.mkdir(output_dir)
+            r = requests.get(url)
+            if r:
+                with open(output_dir + filename, "wb") as file:
+                    file.write(r.content)
+                    return True
         except Exception, e:
-            print "file dir exists" + output_dir
-
-        if response.info().get('Content-Encoding') == 'gzip':
-            buf = StringIO(response.read())
-            f = gzip.GzipFile(fileobj=buf)
-            data = f.read()
-        else:
-            buf = response.read()
-            data = buf
-        if data:
-            file = open(output_dir + filename, 'wb')
-            file.write(data)
-            file.close()
-            return True
-        else:
-            print "download data error" + filename
+            logging.log(logging.DEBUG, '下载失败: %s, %s'.decode('utf-8') % (filename, str(e.message)))
         return False
 
 class duplicatesPipeline(object):
     def __init__(self):
+        global ids_seen
         self.dumplicate_file = scrapy.utils.project.get_project_settings().get('ROOT') + os.sep + "dumplicate_records.txt"
         try:
-            self.ids_seen = pickle.load(open(self.dumplicate_file, "r"))
+            ids_seen = pickle.load(open(self.dumplicate_file, "r"))
         except:
-            self.ids_seen = set()
+            ids_seen = set()
         dispatcher.connect(self.on_spider_closed, signal=signals.spider_closed)
 
     def on_spider_closed(self, spider, reason):
-        pickle.dump(self.ids_seen, open(self.dumplicate_file, "w"))
+        self.save_ids()
+
+    def save_ids(self):
+        print ids_seen
+        pickle.dump(ids_seen, open(self.dumplicate_file, "w"))
 
     def process_item(self, item, spider):
-        if item['url'] in self.ids_seen:
+        if item['name'] in ids_seen:
             raise DropItem("Duplicate item found: %s" % item)
-        else:
-            self.ids_seen.add(item['url'])
-            return item
+        return item

@@ -14,30 +14,34 @@ BOT_NAME = 'jav'
 
 ROOT = os.path.split(os.path.realpath(__file__))[0] + os.sep + ".."
 
+IS_GRAB_ALL = True
+
 SPIDER_MODULES = ['jav.spiders']
 NEWSPIDER_MODULE = 'jav.spiders'
 ITEM_PIPELINES = ['jav.pipelines.JavPipeline']
-
+DOWNLOADER_MIDDLEWARES = {  
+    'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware' : None,  
+    'jav.useragent.RotateUserAgentMiddleware' :400  
+}  
 ITEM_PIPELINES = {
 	'jav.pipelines.JavPipeline': 600,
-	#'jav.pipelines.MyImagesPipeline': 500,
 	'jav.pipelines.duplicatesPipeline': 100,
 }
 
-
+DUPEFILTER_CLASS = 'scrapy.dupefilters.RFPDupeFilter'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'jav (+http://www.yourdomain.com)'
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS=2
+CONCURRENT_REQUESTS=3
 
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY=3
+DOWNLOAD_DELAY=1
 # The download delay setting will honor only one of:
-CONCURRENT_REQUESTS_PER_DOMAIN=2
-CONCURRENT_REQUESTS_PER_IP=2
+CONCURRENT_REQUESTS_PER_DOMAIN=3
+CONCURRENT_REQUESTS_PER_IP=3
 
 # Disable cookies (enabled by default)
 #COOKIES_ENABLED=False
