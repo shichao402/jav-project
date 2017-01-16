@@ -48,3 +48,4 @@ Temporary Items
 *.pyc
 output/*
 dumplicate_records.txt
+*.pyc
