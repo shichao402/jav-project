@@ -30,9 +30,9 @@ class JavPipeline(object):
             if self.download(item['image_link'], output_dir, image_filename):
                 image_download_success = True
                 break;
-        #Í¼Æ¬ÏÂÔØÊ§°Ü
+        #å›¾ç‰‡ä¸‹è½½å¤±è´¥
         if image_download_success == False:
-            logging.log(logging.DEBUG, 'Í¼Æ¬ÏÂÔØÊ§°Ü: %s'.decode('utf-8') % (image_filename))
+            logging.log(logging.DEBUG, 'å›¾ç‰‡ä¸‹è½½å¤±è´¥: %s'.decode('utf-8') % (image_filename))
             return item
 
         for i in range(3):
@@ -50,17 +50,17 @@ class JavPipeline(object):
                                 torrent_file.close()
                         except Exception as e:
                             pass
-                        logging.log(logging.DEBUG, 'ÏÂÔØÎÄ¼ş½âÎöÊ§°Ü: %s, %s'.decode('utf-8') % (output_dir + torrent_filename, str(e.message)))
+                        logging.log(logging.DEBUG, 'ä¸‹è½½æ–‡ä»¶è§£æå¤±è´¥: %s, %s'.decode('utf-8') % (output_dir + torrent_filename, str(e.message)))
                         if not os.remove(output_dir + torrent_filename):
-                            logging.log(logging.DEBUG, 'ÏÂÔØÎÄ¼şÉ¾³ıÊ§°Ü: %s, %s'.decode('utf-8') % (output_dir + torrent_filename, str(e.message)))
+                            logging.log(logging.DEBUG, 'ä¸‹è½½æ–‡ä»¶åˆ é™¤å¤±è´¥: %s, %s'.decode('utf-8') % (output_dir + torrent_filename, str(e.message)))
                         continue
         
         return item
 
     def download(self, url, output_dir, filename):
         if not os.path.isdir(output_dir):
-            if not os.mkdirs(output_dir):
-                logging.log(logging.DEBUG, '´´½¨Ê§°Ü: %s'.decode('utf-8') % (output_dir))
+            if not os.makedirs(output_dir):
+                logging.log(logging.DEBUG, 'åˆ›å»ºå¤±è´¥: %s'.decode('utf-8') % (output_dir))
         try:
             r = requests.get(url)
             if r:
@@ -68,7 +68,7 @@ class JavPipeline(object):
                     file.write(r.content)
                     return True
         except Exception, e:
-            logging.log(logging.DEBUG, 'ÏÂÔØÊ§°Ü: %s, %s'.decode('utf-8') % (filename, str(e.message)))
+            logging.log(logging.DEBUG, 'ä¸‹è½½å¤±è´¥: %s, %s'.decode('utf-8') % (filename, str(e.message)))
         return False
 
 class duplicatesPipeline(object):
