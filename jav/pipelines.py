@@ -59,10 +59,7 @@ class JavPipeline(object):
 
     def download(self, url, output_dir, filename):
         if not os.path.isdir(output_dir):
-            logging.log(logging.DEBUG, '文件夹不存在: %s'.decode('utf-8') % (output_dir))
-            if os.mkdirs(output_dir):
-                logging.log(logging.DEBUG, '创建成功: %s'.decode('utf-8') % (output_dir))
-            else:
+            if not os.mkdirs(output_dir):
                 logging.log(logging.DEBUG, '创建失败: %s'.decode('utf-8') % (output_dir))
         try:
             r = requests.get(url)
