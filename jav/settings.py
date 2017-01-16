@@ -14,7 +14,7 @@ BOT_NAME = 'jav'
 
 ROOT = os.path.split(os.path.realpath(__file__))[0] + os.sep + ".."
 
-IS_GRAB_ALL = True
+IS_GRAB_ALL = False
 
 SPIDER_MODULES = ['jav.spiders']
 NEWSPIDER_MODULE = 'jav.spiders'
