@@ -32,7 +32,7 @@ class JavPipeline(object):
                 break;
         #图片下载失败
         if image_download_success == False:
-            logging.log(logging.DEBUG, '图片下载失败: %s, %s'.decode('utf-8') % (image_filename))
+            logging.log(logging.DEBUG, '图片下载失败: %s'.decode('utf-8') % (image_filename))
             return item
 
         for i in range(3):
