@@ -16,3 +16,5 @@ if "!prenetwork!" neq "wifi" (
 	:: 切换之前是local,才需要恢复成local
 	call "D:\Program Files\switch.bat" local no_close
 )
+
+call sync.ffs_batch

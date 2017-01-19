@@ -72,13 +72,15 @@ class duplicatesPipeline(object):
             ids_seen = pickle.load(open(self.dumplicate_file, "r"))
         except:
             ids_seen = set()
+        self.id_seen_count = len(ids_seen)
         dispatcher.connect(self.on_spider_closed, signal=signals.spider_closed)
 
     def on_spider_closed(self, spider, reason):
         self.save_ids()
 
     def save_ids(self):
-        print ids_seen
+        new_count = len(ids_seen)
+        logging.log(logging.DEBUG, '新增抓取数量: %d'.decode('utf-8') % (new_count - self.id_seen_count))
         pickle.dump(ids_seen, open(self.dumplicate_file, "w"))
 
     def process_item(self, item, spider):

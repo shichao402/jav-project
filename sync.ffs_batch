@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<FreeFileSync XmlFormat="5" XmlType="GUI">
+<FreeFileSync XmlFormat="6" XmlType="BATCH">
     <MainConfig>
         <Comparison>
             <Variant>TimeAndSize</Variant>
@@ -40,19 +40,20 @@
                 <Item>*.qrs</Item>
             </Exclude>
             <TimeSpan Type="None">0</TimeSpan>
-            <SizeMin Unit="KB">5000</SizeMin>
+            <SizeMin Unit="KB">0</SizeMin>
             <SizeMax Unit="None">0</SizeMax>
         </GlobalFilter>
         <FolderPairs>
             <Pair>
-                <Left>D:\Downloads\vedio</Left>
-                <Right>D:\微云同步盘\48822512\vvvvvvv</Right>
+                <Left>E:\git\jav-project\output</Left>
+                <Right>D:\微云同步盘\48822512\j</Right>
             </Pair>
         </FolderPairs>
         <OnCompletion/>
     </MainConfig>
-    <GuiConfig>
+    <BatchConfig>
         <HandleError>Ignore</HandleError>
-        <MiddleGridView>Action</MiddleGridView>
-    </GuiConfig>
+        <RunMinimized>true</RunMinimized>
+        <LogfileFolder Limit="-1"/>
+    </BatchConfig>
 </FreeFileSync>
